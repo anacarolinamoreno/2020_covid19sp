@@ -1,0 +1,140 @@
+# CÁLCULOS A PARTIR DOS DADOS DE CASOS E MORTES CONFIRMADAS (POR DATA DE NOTIFICAÇÃO) NO REPOSITÓRIO DA FUNDAÇÃO SEADE
+
+### DF PRINCIPAL - AGRUPADO POR DRS
+
+df <- 'https://raw.githubusercontent.com/seade-R/dados-covid-sp/master/data/dados_covid_sp.csv' %>% 
+  read_csv2() %>% 
+  mutate(
+    nome_drs = replace(nome_drs, nome_munic == 'São Paulo', 'Município de São Paulo'),
+    nome_drs = replace(nome_drs, nome_munic == 'Caieiras', "Grande SP Norte"),
+    nome_drs = replace(nome_drs, nome_munic == 'Cajamar', "Grande SP Norte"),
+    nome_drs = replace(nome_drs, nome_munic == 'Francisco Morato', "Grande SP Norte"),
+    nome_drs = replace(nome_drs, nome_munic == 'Franco da Rocha', "Grande SP Norte"),
+    nome_drs = replace(nome_drs, nome_munic == 'Mairiporã', "Grande SP Norte"),
+    nome_drs = replace(nome_drs, nome_munic == 'Arujá', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Biritiba Mirim', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Ferraz de Vasconcelos', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Guararema', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Guarulhos', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Itaquaquecetuba', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Mogi das Cruzes', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Poá', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Salesópolis', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Santa Isabel', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Suzano', "Grande SP Leste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Diadema', "Grande SP Sudeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Mauá', "Grande SP Sudeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Ribeirão Pires', "Grande SP Sudeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Rio Grande da Serra', "Grande SP Sudeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Santo André', "Grande SP Sudeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'São Bernardo do Campo', "Grande SP Sudeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'São Caetano do Sul', "Grande SP Sudeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Cotia', "Grande SP Sudoeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Embu das Artes', "Grande SP Sudoeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Embu-Guaçu', "Grande SP Sudoeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Itapecerica da Serra', "Grande SP Sudoeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Juquitiba', "Grande SP Sudoeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'São Lourenço da Serra', "Grande SP Sudoeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Taboão da Serra', "Grande SP Sudoeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Vargem Grande Paulista', "Grande SP Sudoeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Barueri', "Grande SP Oeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Carapicuíba', "Grande SP Oeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Itapevi', "Grande SP Oeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Jandira', "Grande SP Oeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Osasco', "Grande SP Oeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Pirapora do Bom Jesus', "Grande SP Oeste"),
+    nome_drs = replace(nome_drs, nome_munic == 'Santana de Parnaíba', "Grande SP Oeste"),
+  ) %>% 
+  group_by(nome_drs, datahora) %>% 
+  summarise(
+    casos = sum(casos),
+    obitos = sum(obitos),
+    casos_novos =  sum(casos_novos),
+    obitos_novos =  sum(obitos_novos),
+    pop = sum(pop)
+  ) %>% 
+  arrange(datahora) %>% 
+  mutate(
+    regiao = pop / casos_novos 
+  ) %>% 
+  mutate(
+    regiao = replace(regiao, nome_drs == "Araçatuba", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Araraquara", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Baixada Santista", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Barretos", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Bauru", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Campinas", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Franca", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Grande SP Leste", "Grande São Paulo"), 
+    regiao = replace(regiao, nome_drs == "Grande SP Norte", "Grande São Paulo"), 
+    regiao = replace(regiao, nome_drs == "Grande SP Oeste", "Grande São Paulo"), 
+    regiao = replace(regiao, nome_drs == "Grande SP Sudeste", "Grande São Paulo"), 
+    regiao = replace(regiao, nome_drs == "Grande SP Sudoeste", "Grande São Paulo"), 
+    regiao = replace(regiao, nome_drs == "Marília", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Município de São Paulo", "Grande São Paulo"), 
+    regiao = replace(regiao, nome_drs == "Piracicaba", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Presidente Prudente", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Registro", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Ribeirão Preto", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "São João da Boa Vista", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "São José do Rio Preto", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Sorocaba", "Interior e Litoral"), 
+    regiao = replace(regiao, nome_drs == "Taubaté", "Interior e Litoral"), 
+  ) %>% 
+  mutate(
+    casos_mm7d = rollapply(casos_novos, 7, mean, align = 'right', fill = NA),
+    casos_7d =  casos_mm7d * 7,
+    casos_7d_l = lag(casos_7d, 7),
+    casos_mm7d_14 = lag(casos_mm7d, 13),
+    casos_mm_var = (casos_mm7d / casos_mm7d_14) - 1, 
+    casos_mm_var2 = (casos_mm7d / casos_mm7d_14) - 1,
+    casos_pc = (casos / pop) * 100000,
+    obitos_mm7d = rollapply(obitos_novos, 7, mean, align = 'right', fill = NA),
+    obitos_7d = obitos_mm7d * 7,
+    obitos_7d_l = lag(obitos_7d, 7), 
+    obitos_mm7d_14 = lag(obitos_mm7d, 13),
+    obitos_mm_var = (obitos_mm7d / obitos_mm7d_14) - 1, 
+    obitos_mm_var2 = (obitos_mm7d / obitos_mm7d_14) - 1,
+    obitos_pc = (obitos / pop) * 100000, 
+    media_movel_casos_nova = scales::number(casos_mm7d, accuracy = 1, big.mark = ".", decimal.mark = ","),
+    media_movel_casos_antiga = scales::number(casos_mm7d_14, accuracy = 1, big.mark = ".", decimal.mark = ","),
+    variacao_14dias_casos = scales::percent(casos_mm_var2, accuracy = 0.1, big.mark = ".", decimal.mark = ","),
+    tendencia_casos = case_when(
+      casos_mm_var > 0.154 ~ "ALTA",
+      between(casos_mm_var, -0.154, 0.154) ~ "ESTABILIDADE",
+      casos_mm_var < -0.154 ~ "QUEDA"),
+    casos_100mil_hab =  scales::number(casos_pc, accuracy = 0.1, big.mark = ".", decimal.mark = ","),
+    mortes_100mil_hab = scales::number(obitos_pc, accuracy = 0.1, big.mark = ".", decimal.mark = ","),
+    media_movel_mortes_nova = scales::number(obitos_mm7d, accuracy = 1, big.mark = ".", decimal.mark = ","),
+    media_movel_mortes_antiga = scales::number(obitos_mm7d_14, accuracy = 1, big.mark = ".", decimal.mark = ","),
+    variacao_14dias_mortes = scales::percent(obitos_mm_var2, accuracy = 0.1, big.mark = ".", decimal.mark = ","),
+    tendencia_mortes = case_when(
+      obitos_mm_var > 0.154 ~ "ALTA",
+      between(casos_mm_var, -0.154, 0.154) ~ "ESTABILIDADE",
+      obitos_mm_var < -0.154 ~ "QUEDA")
+  )
+  
+  
+ ### DF POR MACRORREGIÃO: HISTÓRICO GRANDE SP X INTERIOR E LITORAL
+ 
+ df_regiao <- df %>% 
+  group_by(regiao, datahora) %>% 
+  summarise(
+    casos = sum(casos),
+    obitos = sum(obitos),
+    casos_novos =  sum(casos_novos),
+    obitos_novos =  sum(obitos_novos),
+    casos_mm7d = sum(casos_mm7d),
+    casos_mm7d_14 = sum(casos_mm7d_14),
+    obitos_mm7d = sum(obitos_mm7d),
+    obitos_mm7d_14 = sum(obitos_mm7d_14),
+    pop = sum(pop)
+  ) %>% 
+  arrange(datahora)
+  
+  ### DF CAPITAL: HISTÓRICO E VARIAÇÃO DA MÉDIA DE MORTES
+  
+  df_capital <- df %>% 
+  select(nome_drs, datahora, casos_novos, obitos_novos, media_movel_mortes_nova, media_movel_mortes_antiga, variacao_14dias_mortes, tendencia_mortes, pop, casos, casos_100mil_hab, obitos, mortes_100mil_hab) %>% 
+  filter(nome_drs == "Município de São Paulo") %>% 
+  arrange(datahora)
